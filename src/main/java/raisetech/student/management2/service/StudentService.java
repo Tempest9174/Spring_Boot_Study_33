@@ -53,6 +53,9 @@ public class StudentService {
   public  StudentDetail searchStudent(String id){
 
     Student student = repository.searchStudent(id);
+    //if (student == null) {
+      //throw new StudentNotFoundException("指定されたIDの学生が見つかりません: " + id);
+    //}
     List<StudentsCourse> studentCourse = repository.searchStudentCourse(student.getId());
       return new StudentDetail(student, studentCourse);
   }
@@ -64,7 +67,7 @@ public class StudentService {
    * 受講生コース検索を行う
    * 全件検索を行うため条件指定は行わない
    *
-   * @return
+   * @return 受講生コース一覧
    */
   public List<StudentsCourse> searchCourseList() {
     return repository.searchStudentCourseList();
