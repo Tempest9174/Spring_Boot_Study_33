@@ -1,6 +1,10 @@
 
 package raisetech.student.management2.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import java.util.List;
@@ -50,6 +54,8 @@ public class StudentController {
    * 全件検索を行う。条件指定は行わないもの。
    * @return 受講生一覧（全件）
    */
+
+  @Operation(summary = "受講生一覧検索", description = "受講生一覧を全件検索します")
   @GetMapping("/studentList")
   public List<StudentDetail>  getStudentList()  {
 
@@ -87,7 +93,8 @@ public class StudentController {
    * @return 実行結果
    */
 
-
+  @Operation(summary = "受講生登録", description = "受講生情報を登録します", responses =
+      {@ApiResponse(responseCode = "400", content = @Content())})
   @PostMapping("/registerStudent")
   public ResponseEntity<StudentDetail> registerStudent(@RequestBody @Valid StudentDetail studentDetail) {
     StudentDetail responseStudentDetail = service.registerStudent(studentDetail);

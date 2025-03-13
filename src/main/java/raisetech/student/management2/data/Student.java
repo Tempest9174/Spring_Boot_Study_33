@@ -1,5 +1,6 @@
 package raisetech.student.management2.data;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -11,7 +12,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.Setter;
-
+@Schema(description = "受講生情報")
 @Getter
 @Setter
 
