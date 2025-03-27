@@ -20,10 +20,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import raisetech.student.management2.data.StudentsCourse;
 import raisetech.student.management2.domain.StudentDetail;
+import raisetech.student.management2.exception.BadRequestException;
 import raisetech.student.management2.exception.InvalidStudentDetailException;
 //import raisetech.student.management2.exception.InvalidStudentIdException;
 import raisetech.student.management2.exception.MissingParameterException;
@@ -69,11 +71,11 @@ public class StudentController {
    * @param id 受講生ID
    * @return 受講生詳細
    */
-  @GetMapping("/student/{id}")
-  public StudentDetail getStudent(@PathVariable(required = false) String id) {
+  @GetMapping("/student")
+  public StudentDetail getStudent(@RequestParam(required = false) String id) {
     if (Objects.isNull(id) || id.trim().isEmpty() || !id.matches("\\d{1,2}")) {
 
-      throw new StudentNotFoundException("IDに紐づく受講生が存在しません");
+      throw new BadRequestException("IDは1～2桁の数字で指定してください");
     }
     return service.searchStudent(id);
   }

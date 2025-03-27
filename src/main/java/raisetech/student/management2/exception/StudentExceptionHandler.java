@@ -52,6 +52,12 @@ public class StudentExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
+  @ExceptionHandler(BadRequestException.class)
+  public ResponseEntity<String> handleBadRequest(BadRequestException ex) {
+    return ResponseEntity.badRequest().body(ex.getMessage());
+  }
+
+
 
   /**
    * パラメータの入力エラーを処理します。
@@ -66,7 +72,7 @@ public class StudentExceptionHandler {
 
     // ユーザーにJSON形式でエラーメッセージを返す
     Map<String, String> response = new HashMap<>();
-    response.put("error", "Validation failed: 正しい番号を入れてください。");
+    response.put("error", "Validation failed: 空ではなく何らかのパラメータを入れてください。");
     response.put("message", ex.getMessage());
 
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
