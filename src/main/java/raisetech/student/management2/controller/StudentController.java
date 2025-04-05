@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
+import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,10 +40,12 @@ import raisetech.student.management2.service.StudentService;
 @Validated
 @RestController
 public class StudentController {
+
   private StudentService service;
 
   /**
    * コンストラクタ
+   *
    * @param service
    * @param
    */
@@ -52,81 +55,118 @@ public class StudentController {
   }
 
   /**
-   * 受講生詳細の一覧検索
-   * 全件検索を行う。条件指定は行わないもの。
+   * 受講生詳細の一覧検索 全件検索を行う。条件指定は行わないもの。
+   *
    * @return 受講生一覧（全件）
    */
 
-  @Operation(summary = "受講生一覧検索", description = "受講生一覧を全件検索します")
+  @Operation(summary = "受講生一覧検索", description = "受講生一覧を全件検索します",responses =
+     {@ApiResponse(responseCode = "200", description = "一覧検索の成功", content = @Content(mediaType = "application/json")),
+          })
   @GetMapping("/studentList")
-  public List<StudentDetail>  getStudentList()  {
+  public List<StudentDetail> getStudentList() {
 
     return service.searchStudentList();
 
-   }
+  }
 
   /**
-   * 受講生詳細検索を行う
-   * IDに紐づく受講生の情報を取得する
+   * 受講生詳細検索を行う IDに紐づく受講生の情報を取得する
+   *
    * @param id 受講生ID
    * @return 受講生詳細
    */
+
+  @Operation(summary = "受講生詳細検索", description = "受講生詳細を検索します", responses =
+      {@ApiResponse(responseCode = "200",description = "idに応じた学生が検索される", content = @Content(mediaType = "application/json")),
+       @ApiResponse(responseCode = "404", description ="指定したリソースはありません",content = @Content(mediaType = "application/json")),
+       @ApiResponse(responseCode = "400", description = "入力が不適切です" , content = @Content(mediaType = "application/json"))})
+
   @GetMapping("/student")
-  public StudentDetail getStudent(@RequestParam(required = false) String id) {
-    if (Objects.isNull(id) || id.trim().isEmpty() || !id.matches("\\d{1,2}")) {
+    public StudentDetail getStudent(@RequestParam(required = false) String id) {
+//    if (Objects.isNull(id) || id.trim().isEmpty() || !id.matches("\\d{1,2}")) {
+//
+//      throw new BadRequestException("IDは1～2桁の数字で指定してください");
+//    }
+//    return service.searchStudent(id);
+//  }
+      // 400 Bad Request のチェック
+      if (Objects.isNull(id) || id.trim().isEmpty() || !id.matches("\\d{1,2}")) {
+        throw new BadRequestException("IDは1～2桁の数字で指定してください");
+      }
 
-      throw new BadRequestException("IDは1～2桁の数字で指定してください");
-    }
-    return service.searchStudent(id);
+      // サービス層で受講生を検索
+      StudentDetail student = service.searchStudent(id);
+
+      // 404 Not Found のチェック
+      if (student == null) {
+        throw new StudentNotFoundException("指定されたIDの受講生は存在しません");
+      }
+    return student;
   }
-
 //難しい箇所👆AIツールの使い方
 
+  /**
+   * 受講生コース検索を行う
+   * @return 受講生コース一覧
+   */
+
+  @Operation(summary = "コース一覧検索", description = "コース一覧検索をします", responses =
+      {@ApiResponse(responseCode = "200",description = "idに応じた学生が検索される", content = @Content(mediaType = "application/json"))})
 
   @GetMapping("/courseList")
-  public List<StudentsCourse> getCourseList() {
-    return service.searchCourseList();
+    public List<StudentsCourse> getCourseList () {
+      return service.searchCourseList();
 
+    }
+
+
+    /**
+     * 受講生詳細の登録を行う
+     * @param studentDetail 受講生詳細
+     * @return 実行結果
+     */
+
+    @Operation(summary = "受講生登録", description = "受講生情報を登録します", responses =
+        {
+        @ApiResponse(responseCode = "200", description = "登録成功", content = @Content(mediaType = "application/json")),
+        @ApiResponse(responseCode = "400", description = "入力が不適切です", content = @Content(mediaType = "application/json")),
+        @ApiResponse(responseCode = "500", description = "サーバーエラー", content = @Content(mediaType = "application/json"))})
+    @PostMapping("/registerStudent")
+    public ResponseEntity<StudentDetail> registerStudent (@RequestBody @Valid StudentDetail
+    studentDetail){
+      StudentDetail responseStudentDetail = service.registerStudent(studentDetail);
+      return ResponseEntity.ok(responseStudentDetail);
+    }
+
+    //下、レッスン33
+
+    /**
+     * 受講生詳細を更新します。
+     * キャンセルフラグの更新もここで行う（論理削除）
+     * @param studentDetail 受講生詳細
+     * @return 実行結果
+     */
+
+    @Operation(summary = "受講生更新", description = "受講生情報を更新します", responses =
+        {@ApiResponse(responseCode = "200", description = "更新成功", content = @Content(mediaType = "application/json")),
+         @ApiResponse(responseCode = "400", description = "入力が不適切です", content = @Content(mediaType = "application/json")),
+         @ApiResponse(responseCode = "500", description = "サーバーエラー", content = @Content(mediaType = "application/json"))})
+    @PutMapping("/updateStudent")
+    public ResponseEntity<String> updateStudent (@RequestBody @Valid StudentDetail studentDetail){
+
+      service.updateStudent(studentDetail);
+      System.out.println(
+          studentDetail.getStudent().getName() + "さんの受講生情報が新たに更新されました。");
+      return ResponseEntity.ok("更新処理が成功しました");
+    }
+
+    @GetMapping("/courseList/{studentId}")
+    public List<StudentsCourse> getCourseList (@PathVariable @Size(min = 1, max = 10) Long studentId)
+    {
+      return service.searchCourseList();
+      //引数消した
+    }
+    //対応するサービス層がないため有無を言わさず全件検索
   }
 
-  /**
-   * 受講生詳細の登録を行う
-   * @param studentDetail 受講生詳細
-   * @return 実行結果
-   */
-
-  @Operation(summary = "受講生登録", description = "受講生情報を登録します", responses =
-      {@ApiResponse(responseCode = "400", content = @Content())})
-  @PostMapping("/registerStudent")
-  public ResponseEntity<StudentDetail> registerStudent(@RequestBody @Valid StudentDetail studentDetail) {
-    StudentDetail responseStudentDetail = service.registerStudent(studentDetail);
-    return ResponseEntity.ok(responseStudentDetail);
-  }
-
-
-
-  //下、レッスン33
-
-  /**
-   * 受講生詳細を更新します。
-   * キャンセルフラグの更新もここで行う（論理削除）
-   * @param studentDetail 受講生詳細
-   * @return 実行結果
-   */
-
-  @PutMapping("/updateStudent")
-  public ResponseEntity<String> updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
-
-    service.updateStudent(studentDetail);
-    System.out.println(studentDetail.getStudent().getName() + "さんの受講生受講生情報が新たに更新されました。");
-    return ResponseEntity.ok("更新処理が成功しました");
-  }
-
-
-  @GetMapping("/courseList/{studentId}")
-  public List<StudentsCourse> getCourseList(@PathVariable @Size(min = 1,max = 10) Long studentId) {
-    return service.searchCourseList();
-    //引数消した
-  }
-  //対応するサービス層がないため有無を言わさず全件検索
-}
