@@ -92,10 +92,17 @@ public class StudentExceptionHandler {
    * @param ex
    * @return HTTPステータスコード と、改行で区切られたバリデーションエラーメッセージ
    */
-//  @ExceptionHandler(StudentNotFoundException.class)
-//  public ResponseEntity<Map<String, String>> handleNotFound(NotFoundException ex) {
-//    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
-//  }
+  @ExceptionHandler(StudentNotFoundException.class)
+   public ResponseEntity<Map<String, String>> StudentNotFoundException(StudentNotFoundException ex) {
+    // ターミナルにログ出力（開発者向け）
+    logger.error("予期しないエラー: {}", ex.getMessage());
+
+    // ユーザーにJSON形式でエラーメッセージを返す
+    Map<String, String> response = new HashMap<>();
+    response.put("error", "Validation failed: 指定されたIDに該当する受講生が見つかりません。");
+    response.put("message", ex.getMessage());
+   return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
+  }
 
 
     @ExceptionHandler(BadRequestException.class)

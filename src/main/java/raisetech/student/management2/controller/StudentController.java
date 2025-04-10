@@ -79,7 +79,7 @@ public class StudentController {
 
   @Operation(summary = "受講生詳細検索", description = "受講生詳細を検索します", responses =
       {@ApiResponse(responseCode = "200",description = "idに応じた学生が検索される", content = @Content(mediaType = "application/json")),
-       @ApiResponse(responseCode = "404", description ="指定したリソースはありません",content = @Content(mediaType = "application/json")),
+       @ApiResponse(responseCode = "404", description ="指定した学生は存在しません",content = @Content(mediaType = "application/json")),
        @ApiResponse(responseCode = "400", description = "入力が不適切です" , content = @Content(mediaType = "application/json"))})
 
   @GetMapping("/student")
@@ -161,6 +161,11 @@ public class StudentController {
       return ResponseEntity.ok("更新処理が成功しました");
     }
 
+    /**
+     * idからコース情報を取得します。
+     * @param studentId 受講生番号
+     * @return 実行結果
+     */
     @GetMapping("/courseList/{studentId}")
     public List<StudentsCourse> getCourseList (@PathVariable @Size(min = 1, max = 10) Long studentId)
     {

@@ -13,6 +13,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.Setter;
+
+
 @Schema(description = "受講生情報")
 @Getter
 @Setter
