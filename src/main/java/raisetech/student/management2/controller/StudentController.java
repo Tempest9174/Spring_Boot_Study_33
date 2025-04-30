@@ -3,6 +3,7 @@ package raisetech.student.management2.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,9 +80,9 @@ public class StudentController {
    */
 
   @Operation(summary = "受講生詳細検索", description = "受講生詳細を検索します", responses =
-      {@ApiResponse(responseCode = "200",description = "idに応じた学生が検索される", content = @Content(mediaType = "application/json")),
-       @ApiResponse(responseCode = "404", description ="指定した学生は存在しません",content = @Content(mediaType = "application/json")),
-       @ApiResponse(responseCode = "400", description = "入力が不適切です" , content = @Content(mediaType = "application/json"))})
+      {@ApiResponse(responseCode = "200",description = "idに応じた学生が検索される", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudentDetail.class))),
+       @ApiResponse(responseCode = "404", description ="指定した学生は存在しません",content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+       @ApiResponse(responseCode = "400", description = "入力が不適切です" , content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),})
 
   @GetMapping("/student")
     public StudentDetail getStudent(@RequestParam(required = false) String id) {
@@ -112,7 +114,8 @@ public class StudentController {
    */
 
   @Operation(summary = "コース一覧検索", description = "コース一覧検索をします", responses =
-      {@ApiResponse(responseCode = "200",description = "idに応じた学生が検索される", content = @Content(mediaType = "application/json"))})
+      {@ApiResponse(responseCode = "200",description = "idに応じた学生が検索される", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudentsCourse.class))),})
+
 
   @GetMapping("/courseList")
     public List<StudentsCourse> getCourseList () {
@@ -129,9 +132,10 @@ public class StudentController {
 
     @Operation(summary = "受講生登録", description = "受講生情報を登録します", responses =
         {
-        @ApiResponse(responseCode = "200", description = "登録成功", content = @Content(mediaType = "application/json")),
-        @ApiResponse(responseCode = "400", description = "入力が不適切です", content = @Content(mediaType = "application/json")),
-        @ApiResponse(responseCode = "500", description = "サーバーエラー", content = @Content(mediaType = "application/json"))})
+        @ApiResponse(responseCode = "200", description = "登録成功", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudentDetail.class))),
+        @ApiResponse(responseCode = "400", description = "入力が不適切です", content = @Content(mediaType = "application/json" ,schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "500", description = "サーバーエラー", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+        })
     @PostMapping("/registerStudent")
     public ResponseEntity<StudentDetail> registerStudent (@RequestBody @Valid StudentDetail
     studentDetail){
@@ -149,9 +153,9 @@ public class StudentController {
      */
 
     @Operation(summary = "受講生更新", description = "受講生情報を更新します", responses =
-        {@ApiResponse(responseCode = "200", description = "更新成功", content = @Content(mediaType = "application/json")),
-         @ApiResponse(responseCode = "400", description = "入力が不適切です", content = @Content(mediaType = "application/json")),
-         @ApiResponse(responseCode = "500", description = "サーバーエラー", content = @Content(mediaType = "application/json"))})
+        {@ApiResponse(responseCode = "200", description = "更新成功", content = @Content(mediaType = "application/json" , schema = @Schema(implementation = StudentDetail.class))),
+         @ApiResponse(responseCode = "400", description = "入力が不適切です", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+         @ApiResponse(responseCode = "500", description = "サーバーエラー", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))})
     @PutMapping("/updateStudent")
     public ResponseEntity<String> updateStudent (@RequestBody @Valid StudentDetail studentDetail){
 
