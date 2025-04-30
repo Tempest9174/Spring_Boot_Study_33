@@ -84,21 +84,22 @@ public class StudentController {
        @ApiResponse(responseCode = "404", description ="指定した学生は存在しません",content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
        @ApiResponse(responseCode = "400", description = "入力が不適切です" , content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),})
 
-  @GetMapping("/student")
-    public StudentDetail getStudent(@RequestParam(required = false) String id) {
+  @GetMapping("/student/{id}")
+  public StudentDetail getStudent(@PathVariable String id) {
 
-      // 400 Bad Request のチェック
-      if (Objects.isNull(id) || id.trim().isEmpty() || !id.matches("\\d{1,2}")) {
-        throw new BadRequestException("IDは1～2桁の数字で指定してください");
-      }
+    // 400 Bad Request のチェック
+    if (id == null || id.trim().isEmpty() || !id.matches("\\d{1,2}")) {
+      throw new BadRequestException("IDは1～2桁の数字で指定してください");
+    }
 
-      // サービス層で受講生を検索
-      StudentDetail student = service.searchStudent(id);
+    // サービス層で受講生を検索
+    StudentDetail student = service.searchStudent(id);
 
-      // 404 Not Found のチェック
-      if (student == null) {
-        throw new StudentNotFoundException("指定されたIDの受講生は存在しません");
-      }
+    // 404 Not Found のチェック
+    if (student == null) {
+      throw new StudentNotFoundException("指定されたIDの受講生は存在しません");
+    }
+
     return student;
   }
 //難しい箇所👆AIツールの使い方
