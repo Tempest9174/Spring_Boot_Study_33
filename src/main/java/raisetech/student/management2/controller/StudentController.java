@@ -86,12 +86,7 @@ public class StudentController {
 
   @GetMapping("/student")
     public StudentDetail getStudent(@RequestParam(required = false) String id) {
-//    if (Objects.isNull(id) || id.trim().isEmpty() || !id.matches("\\d{1,2}")) {
-//
-//      throw new BadRequestException("IDは1～2桁の数字で指定してください");
-//    }
-//    return service.searchStudent(id);
-//  }
+
       // 400 Bad Request のチェック
       if (Objects.isNull(id) || id.trim().isEmpty() || !id.matches("\\d{1,2}")) {
         throw new BadRequestException("IDは1～2桁の数字で指定してください");
@@ -114,7 +109,7 @@ public class StudentController {
    */
 
   @Operation(summary = "コース一覧検索", description = "コース一覧検索をします", responses =
-      {@ApiResponse(responseCode = "200",description = "idに応じた学生が検索される", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudentsCourse.class))),})
+      {@ApiResponse(responseCode = "200",description = "コース一覧が表示される", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudentsCourse.class))),})
 
 
   @GetMapping("/courseList")

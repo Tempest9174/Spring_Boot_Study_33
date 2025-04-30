@@ -12,10 +12,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class StudentNotFoundException extends RuntimeException {
 
-  // デフォルトコンストラクタ
-//  public StudentNotFoundException() {
-//    super("学生情報が見つかりません");
-//  }
 
   // カスタムメッセージを設定できるコンストラクタ
   public StudentNotFoundException(String message) {

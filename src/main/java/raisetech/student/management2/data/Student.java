@@ -21,7 +21,7 @@ import lombok.Setter;
 
 public class Student {
 
-  @NotEmpty(message = "IDを入力してください")
+  //@NotEmpty(message = "IDを入力してください")
   private String id;
   @NotBlank(message = "名前を入力してください")
   @Size(max = 10, message = "名前は10字以内で入力してください")
