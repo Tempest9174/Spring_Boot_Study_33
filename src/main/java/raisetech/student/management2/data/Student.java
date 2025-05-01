@@ -1,9 +1,11 @@
 package raisetech.student.management2.data;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
@@ -12,12 +14,14 @@ import lombok.Generated;
 import lombok.Getter;
 import lombok.Setter;
 
+
+@Schema(description = "受講生情報")
 @Getter
 @Setter
 
 public class Student {
 
-  @NotNull
+  //@NotEmpty(message = "IDを入力してください")
   private String id;
   @NotBlank(message = "名前を入力してください")
   @Size(max = 10, message = "名前は10字以内で入力してください")
