@@ -102,7 +102,7 @@ public class StudentController {
 
     return student;
   }
-//難しい箇所👆AIツールの使い方
+//難しい箇所:AIツールの使い方
 
   /**
    * 受講生コース検索を行う
